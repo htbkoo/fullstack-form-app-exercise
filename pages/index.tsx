@@ -1,6 +1,7 @@
 import Head from "next/head";
 
 import styles from "styles/Home.module.css";
+import HeatMap from "@/components/index/HeatMap";
 
 export default function Home() {
   return (
@@ -15,6 +16,7 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
+        <HeatMap />
       </main>
 
       <footer className={styles.footer}/>
