@@ -1,24 +1,16 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from "next";
-
-import { graphql } from "graphql";
 import { schema } from "@/schema";
+
+import { graphqlHTTP } from "express-graphql";
 
 type Data = {
   name: string;
 };
 
-export default async (req: NextApiRequest, res: NextApiResponse<any>) => {
-  const query = ` { district(name: "${req.query.districtName??''}") }`
-
-  const executionResult = await graphql(schema, query, root);
-  res.status(200).json(executionResult)
-}
-
 // The root provides a resolver function for each API endpoint
 const root = {
   district: (args: any) => {
-    console.log(args.name)
+    console.log(args.name);
     return `district name is ${args.name}`;
   },
 };
@@ -27,3 +19,18 @@ const root = {
 // graphql(schema, '{ hello }', root).then((response) => {
 //   console.log(response);
 // });
+
+// var app = express();
+// app.use('/graphql', graphqlHTTP({
+//   schema: schema,
+//   rootValue: root,
+//   graphiql: true,
+// }));
+// app.listen(4000);
+// console.log('Running a GraphQL API server at http://localhost:4000/graphql');
+
+export default graphqlHTTP({
+  rootValue: root,
+  graphiql: true,
+  schema,
+});
