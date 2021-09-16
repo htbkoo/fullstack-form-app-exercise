@@ -1,17 +1,30 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { schema } from "@/schema";
+
+// Reference for using GraphQL Code Generator: https://hasura.io/blog/your-guide-to-graphql-with-typescript/#tutorial-2-using-graphql-code-generator
 
 import { graphqlHTTP } from "express-graphql";
+import { buildSchema } from "graphql";
+
+import districtAreas from "@/resources/data/district_areas/lor_bezirksregionen.json";
 
 type Data = {
   name: string;
 };
 
+const DISTRICT_JSON_MAPPING: any = Object.freeze({
+  districtAreas,
+});
+
 // The root provides a resolver function for each API endpoint
 const root = {
-  district: (args: any) => {
-    console.log(args.name);
-    return `district name is ${args.name}`;
+  district: ({ name }: any) => {
+    console.log(name);
+    if (name in DISTRICT_JSON_MAPPING) {
+      // return DISTRICT_JSON_MAPPING[name];
+      return JSON.stringify(DISTRICT_JSON_MAPPING[name]);
+    } else {
+      return null;
+    }
   },
 };
 
@@ -32,5 +45,9 @@ const root = {
 export default graphqlHTTP({
   rootValue: root,
   graphiql: true,
-  schema,
+  schema: buildSchema(`
+  type Query {
+    district(name: String): String
+  }
+`),
 });
